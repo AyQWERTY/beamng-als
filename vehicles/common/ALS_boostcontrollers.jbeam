@@ -1,0 +1,123 @@
+{
+"turboNorm":{
+	"information":{
+		"authors":"BeamNG",
+		"name":"Turbo Normalization",
+		"value":500,
+	}
+	"slotType" : "TurboNormalization",
+    "variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$torqueOffToleranceVar", "range", "%", "Engine", 6, 0, 15, "Turbo Normalization Tolerance", "Max torque delta between the current torque and the torque the engine would produce at sea level"{"stepDis":0.5}],
+        ],
+	"turbocharger":{
+		"turboNormalization" : true,
+        "torqueOffTolerance" : "$torqueOffToleranceVar"
+	}
+}
+"BoostByGear":{
+    "information":{
+        "authors":"BeamNG",
+        "name":"Boost-By-Gear Controller",
+        "value":1500,
+    }
+    "slotType" : "ALSboostController",
+    "variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$wastegateStart0", "range", "psi", "Engine", 12, 0, 100, "Wastegate Pressure 01", "Pressure at which the wastegate begins to open in first gear"{"stepDis":0.5}],
+		["$wastegateStart1", "range", "psi", "Engine", 12, 0, 100, "Wastegate Pressure 02", "Pressure at which the wastegate begins to open in second gear"{"stepDis":0.5}],
+		["$wastegateStart2", "range", "psi", "Engine", 12, 0, 100, "Wastegate Pressure 03", "Pressure at which the wastegate begins to open in third gear"{"stepDis":0.5}],
+		["$wastegateStart3", "range", "psi", "Engine", 12, 0, 100, "Wastegate Pressure 04", "Pressure at which the wastegate begins to open in fourth gear"{"stepDis":0.5}],
+		["$wastegateStart4", "range", "psi", "Engine", 12, 0, 100, "Wastegate Pressure 05", "Pressure at which the wastegate begins to open in fifth gear"{"stepDis":0.5}],
+		["$wastegateStart5", "range", "psi", "Engine", 12, 0, 100, "Wastegate Pressure 06", "Pressure at which the wastegate begins to open in sixth gear"{"stepDis":0.5}],
+		
+		["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the 'Scramble Button' is pressed"{"stepDis":0.1}],
+		
+		["$ALSPressurePsiRate", "range", "%", "Engine", 20, 10, 120, "ALS % Pressure", "% Pressure at which the ALS operate"{"stepDis":0.1}],
+    ],
+	"turbocharger":{
+		"wastegateStart":["$wastegateStart0", "$wastegateStart1", "$wastegateStart2", "$wastegateStart3", "$wastegateStart4", "$wastegateStart5"],
+        "wastegateLimit":["$=$wastegateStart0+1", "$=$wastegateStart1+1", "$=$wastegateStart2+1", "$=$wastegateStart3+1", "$=$wastegateStart4+1", "$=$wastegateStart5+1"],
+		"ALSPressure": "$ALSPressurePsiRate",
+		"scramblePressure":"$scramblePressure",
+	}
+}
+
+"BoostBySpeed":{
+    "information":{
+        "authors":"BeamNG",
+        "name":"Boost-By-Speed Controller",
+        "value":1500,
+    }
+    "slotType" : "ALSboostController",
+    "variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        
+        //Speed
+        ["$speed0", "range", "m/s", "Engine",   0, 0, 112, "Speed 0", "Speed at which the boost is set to position 0"{"stepDis":0.1}],
+        ["$speed1", "range", "m/s", "Engine",   8, 0, 112, "Speed 1", "Speed at which the boost is set to position 1"{"stepDis":0.1}],
+        ["$speed2", "range", "m/s", "Engine",  17, 0, 112, "Speed 2", "Speed at which the boost is set to position 2"{"stepDis":0.1}],
+        ["$speed3", "range", "m/s", "Engine",  25, 0, 112, "Speed 3", "Speed at which the boost is set to position 3"{"stepDis":0.1}],
+        ["$speed4", "range", "m/s", "Engine",  30, 0, 112, "Speed 4", "Speed at which the boost is set to position 4"{"stepDis":0.1}],
+        ["$speed5", "range", "m/s", "Engine",  35, 0, 112, "Speed 5", "Speed at which the boost is set to position 5"{"stepDis":0.1}],
+        ["$speed6", "range", "m/s", "Engine",  40, 0, 112, "Speed 6", "Speed at which the boost is set to position 6"{"stepDis":0.1}],
+        ["$speed7", "range", "m/s", "Engine",  45, 0, 112, "Speed 7", "Speed at which the boost is set to position 7"{"stepDis":0.1}],
+        ["$speed8", "range", "m/s", "Engine",  50, 0, 112, "Speed 8", "Speed at which the boost is set to position 8"{"stepDis":0.1}],
+        ["$speed9", "range", "m/s", "Engine",  56, 0, 112, "Speed 9", "Speed at which the boost is set to position 9"{"stepDis":0.1}],
+		
+        //Boost
+        ["$boost0", "range", "psi", "Engine",   10, 0, 100, "Speed 0 boost", "Boost of point 0"{"stepDis":0.1}],
+        ["$boost1", "range", "psi", "Engine",   12, 0, 100, "Speed 1 boost", "Boost of point 1"{"stepDis":0.1}],
+        ["$boost2", "range", "psi", "Engine",   15, 0, 100, "Speed 2 boost", "Boost of point 2"{"stepDis":0.1}],
+        ["$boost3", "range", "psi", "Engine",   20, 0, 100, "Speed 3 boost", "Boost of point 3"{"stepDis":0.1}],
+        ["$boost4", "range", "psi", "Engine",   22, 0, 100, "Speed 4 boost", "Boost of point 4"{"stepDis":0.1}],
+        ["$boost5", "range", "psi", "Engine",   22, 0, 100, "Speed 5 boost", "Boost of point 5"{"stepDis":0.1}],
+        ["$boost6", "range", "psi", "Engine",   22, 0, 100, "Speed 6 boost", "Boost of point 6"{"stepDis":0.1}],
+        ["$boost7", "range", "psi", "Engine",   22, 0, 100, "Speed 7 boost", "Boost of point 7"{"stepDis":0.1}],
+        ["$boost8", "range", "psi", "Engine",   22, 0, 100, "Speed 8 boost", "Boost of point 8"{"stepDis":0.1}],
+        ["$boost9", "range", "psi", "Engine",   22, 0, 100, "Speed 9 boost", "Boost of point 9"{"stepDis":0.1}],
+
+		["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the 'Scramble Button' is pressed"{"stepDis":0.1}],
+		
+		["$ALSPressurePsiRate", "range", "%", "Engine", 20, 10, 120, "ALS % Pressure", "% Pressure at which the ALS operate"{"stepDis":0.1}],
+    ],
+	"turbocharger":{
+		"ALSPressure": "$ALSPressurePsiRate",
+		"scramblePressure":"$scramblePressure",
+        "isBoostBySpeed":true,
+        "boostAtSpeed":[
+            ["$speed0", "$boost0"],
+            ["$speed1", "$boost1"],
+            ["$speed2", "$boost2"],
+            ["$speed3", "$boost3"],
+            ["$speed4", "$boost4"],
+            ["$speed5", "$boost5"],
+            ["$speed6", "$boost6"],
+            ["$speed7", "$boost7"],
+            ["$speed8", "$boost8"],
+            ["$speed9", "$boost9"]
+        ],
+	}
+}
+
+"NoBBG":{
+    "information":{
+        "authors":"BeamNG",
+        "name":"Variable Boost Controller",
+        "value":500,
+    }
+    "slotType" : "ALSboostController",
+	"variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$wastegateStart", "range", "psi", "Engine", 12, 0, 100, "Wastegate Pressure", "Pressure at which the wastegate begins to open"{"stepDis":0.5}],
+		["$ALSPressurePsiRate", "range", "%", "Engine", 20, 10, 120, "ALS Pressure", "% Pressure at which the ALS operate"{"stepDis":0.1}],
+		["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the 'Scramble Button' is pressed"{"stepDis":0.1}],
+    ],
+	"turbocharger":{
+		"wastegateStart":"$wastegateStart",
+		"wastegateLimit":"$=$wastegateStart+1",
+		"ALSPressure":"$ALSPressurePsiRate",
+		"scramblePressure":"$scramblePressure",
+	}
+}
+}

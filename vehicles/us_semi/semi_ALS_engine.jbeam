@@ -1,0 +1,92 @@
+{
+"semi_turbo_ALS_stage3": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"ALS Stage 3 Variable Boost Turbocharger",
+        "value":3000,
+    }
+    "slotType" : "us_semi_turbo",
+
+	"slots": [
+		["type", "default", "description"],
+        ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
+		["TurboNormalization", "", "Turbo Normalization"],
+    ],
+	"variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
+	],
+    "turbocharger": {
+        "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
+        "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
+        "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
+        "bovEnabled":true,
+        "flutterSoundVolumeCoef":0.6,
+		"hissVolumePerPSI": 0.02,
+		"whineVolumePer10kRPM": 0.05,
+        "whinePitchPer10kRPM": 0.01,
+        "wastegateStart":10,
+		"bovSoundVolumeCoef" : 1,
+        "wastegateLimit":10,
+        "maxExhaustPower": 180000,
+		"bovSoundPressureCoef" : 1,  //ALS
+		"ALSTime" : "$ALSDuration",
+		
+		"ALS" : true,
+		"ALSExhaustPower" : 180000,
+		"ALSPressure" : "$ALSPressurePsi",
+		"ALSInstantLoadDrop" : 0.7,
+		
+		
+        "backPressureCoef": 0.0001,
+        "frictionCoef": 155.3,
+        "inertia":15.4,
+        "pressureRatePSI": 80,
+        "damageThresholdTemperature": 1200,
+ "pressurePSI":[
+            //turbineRPM, pressure(PSI)
+            [0,         -4],
+            [30000,     -2.5],
+            [60000,     3],
+            [90000,     15],
+            [150000,    20],
+            [200000,    70],
+            [250000,    98],
+            [300000,    150],
+        ],
+        "engineDef":[
+            //engineRPM, efficiency, exhaustFactor
+            [0,        0,     0],
+            [200,   0.37,   0.1],
+            [400,   0.51,  0.30],
+            [600,   0.64,  0.54],
+            [800,   0.75,  0.75],
+            [1000,  0.78,  0.87],
+            [1200,  0.79,   0.9],
+            [1400,  0.78,  0.87],
+            [1500,  0.775,  0.81],
+            [1600,  0.77,  0.75],
+            [1800,  0.76,  0.67],
+            [2000,  0.74,  0.59],
+            [2200,  0.66,   0.51],
+            [2400,  0.61,   0.43],
+            [2600,  0.50,   0.35],
+            [2800,  0.33,   0.26],
+            [3000,  0.22,   0.18],
+        ],
+
+    },
+    "vehicleController": {
+        "revMatchThrottle":0.2,
+        "clutchLaunchStartRPM":2200,
+        "clutchLaunchTargetRPM":3100,
+    },
+    "mainEngine":{
+        "turbochargerLuaFileName" = "powertrain/ALSturbocharger",
+        "turbocharger":"turbocharger",
+        "instantAfterFireCoef": 0.1,
+        "sustainedAfterFireCoef": 0.1,
+		"sustainedAfterFireTime": 3,
+    },
+}
+}

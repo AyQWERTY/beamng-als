@@ -1,0 +1,496 @@
+{
+"autobello_ALS_intake": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"ALS Stage 3 Variable Boost Turbocharger",
+        "value":3000,
+    }
+    "slotType" : "autobello_intake",
+	"slots": [
+		["type", "default", "description"],
+        ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
+		["TurboNormalization", "", "Turbo Normalization"],
+    ],
+	"variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
+	],
+    "turbocharger": {
+        "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
+        "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
+        "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
+        "bovEnabled":true,
+        "flutterSoundVolumeCoef":0.6,
+		"hissVolumePerPSI": 0.02,
+		"whineVolumePer10kRPM": 0.05,
+        "whinePitchPer10kRPM": 0.01,
+        "wastegateStart":10,
+		"bovSoundVolumeCoef" : 1,
+        "wastegateLimit":10,
+        "maxExhaustPower": 180000,
+		"bovSoundPressureCoef" : 1,  //ALS
+		"ALSTime" : "$ALSDuration",
+		
+		"ALS" : true,
+		"ALSExhaustPower" : 180000,
+		"ALSPressure" : "$ALSPressurePsi",
+		"ALSInstantLoadDrop" : 0.7,
+		
+		
+        "backPressureCoef": 0.0001,
+        "frictionCoef": 155.3,
+        "inertia":15.4,
+        "pressureRatePSI": 75,
+        "damageThresholdTemperature": 1200,
+        "pressurePSI":[
+            //turbineRPM, pressure(PSI)
+            //turbineRPM, pressure(PSI)
+            [0,         -4],
+            [30000,     -2.5],
+            [60000,     3],
+            [90000,     15],
+            [150000,    20],
+            [200000,    70],
+            [250000,    98],
+            [300000,    150],
+        ],
+        "engineDef":[
+            //engineRPM, efficiency, exhaustFactor
+            [0,     0.0,    0.0],
+            [650,   0.15,   0.1],
+            [1400,  0.38,   0.4],
+            [2000,  0.40,    0.45],
+            [2500,  0.42,    0.49],
+            [2750,  0.48,    0.50],
+            [3000,  0.55,    0.58],
+            [4000,  0.84,    0.75],
+            [5000,  0.92,    0.8],
+            [6000,  1.0,    0.85],
+            [7000,  0.94,    0.95],
+            [8000,  0.90,    1.0],
+            [9000,  0.87,    1.0],
+        ],
+
+    },
+    "vehicleController": {
+        "revMatchThrottle":0.2,
+        "clutchLaunchStartRPM":2200,
+        "clutchLaunchTargetRPM":3100,
+    },
+    "mainEngine":{
+        "turbochargerLuaFileName" = "powertrain/ALSturbocharger",
+        "turbocharger":"turbocharger",
+        "instantAfterFireCoef": 0.1,
+        "sustainedAfterFireCoef": 0.1,
+		"sustainedAfterFireTime": 3,
+    },
+	"props": [
+        ["func",            "mesh",                   "idRef:", "idX:", "idY:", "baseRotation",          "rotation",            "translation",         "min", "max", "offset", "multiplier"],
+        ["rpmspin",             "autobello_coolingfan_c", "e11l","e11r","e10l",     {"x":-90, "y":0, "z":0}, {"x":0, "y":1, "z":0}, {"x":0, "y":0, "z":0}, -360,  360,   0,        -1],
+    ],
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        //["autobello_alternator", ["engine"]],
+        ["autobello_belt", ["engine"]],
+        ["autobello_intake_c", ["engine"]],
+        ["autobello_intake_turbo", ["engine","turbo_piping"]],
+        //["autobello_turbo", ["engine"]],
+        //["autobello_filter_b", ["engine"]],
+        ["autobello_fuelpump_b", ["engine"]],
+        ["autobello_cooling_c", ["engine"]],
+        ["autobello_wires_c", ["engine"]],
+    ],
+    "nodes": [
+        ["id", "posX", "posY", "posZ"],
+        {"frictionCoef":0.5},
+        {"nodeMaterial":"|NM_METAL"},
+        //--Intake-
+        {"selfCollision":true},
+        {"collision":true},
+        {"nodeWeight":1},
+        {"group":"turbo_piping"},
+        ["ip1",      0.1, 1.71, 0.70],
+        {"group":""},
+    ],
+    "beams": [
+        ["id1:", "id2:"],
+        {"deformLimitExpansion":1.2},
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1, "beamShortBound":1},
+        //--INTAKE--
+        {"beamSpring":201000,"beamDamp":50},
+        {"beamDeform":4000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["e11l", "ip1"],
+        ["e11r", "ip1"],
+        ["e10l", "ip1"],
+        ["e10r", "ip1"],
+        ["ip1", "e4r"],
+        ["ip1", "e4l"],
+        ["ip1", "e2l"],
+        ["ip1", "e2r"],
+
+        //attach
+        {"beamSpring":201000,"beamDamp":50},
+        {"beamDeform":2500,"beamStrength":15000},
+        {"breakGroup":"intake_turbo"},
+        ["ip1", "trb7"],
+        ["ip1", "trb5"],
+        ["ip1", "trb3"],
+        ["ip1", "trb1"],
+        ["ip1", "trb8"],
+        ["ip1", "trb4"],
+        {"optional":true},
+        ["e11r", "trb3"],
+        ["e11l", "trb7"],
+        {"optional":false},
+        {"breakGroup":""},
+        {"deformLimitExpansion":1.2},
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1, "beamShortBound":1},
+    ],
+    "triangles": [
+        ["id1:","id2:","id3:"],
+        ["e11l", "ip1", "e11r"],
+        {"triangleType":"NONCOLLIDABLE"},
+        {"triangleType":"NORMALTYPE"},
+    ],
+},
+"autobello_sbr_ALS_intake": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"ALS Stage 3 Twin Variable Boost Turbocharger",
+        "value":3000,
+    }
+    "slotType" : "autobello_sbr_intake",
+	"slots": [
+		["type", "default", "description"],
+        ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
+		["TurboNormalization", "", "Turbo Normalization"],
+    ],
+	"variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
+	],
+    "turbocharger": {
+        "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
+        "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
+        "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
+        "bovEnabled":true,
+        "flutterSoundVolumeCoef":0.6,
+		"hissVolumePerPSI": 0.02,
+		"whineVolumePer10kRPM": 0.05,
+        "whinePitchPer10kRPM": 0.01,
+        "wastegateStart":10,
+		"bovSoundVolumeCoef" : 1,
+        "wastegateLimit":10,
+        "maxExhaustPower": 180000,
+		"bovSoundPressureCoef" : 1,  //ALS
+		"ALSTime" : "$ALSDuration",
+		
+		"ALS" : true,
+		"ALSExhaustPower" : 180000,
+		"ALSPressure" : "$ALSPressurePsi",
+		"ALSInstantLoadDrop" : 0.7,
+		
+		
+        "backPressureCoef": 0.0001,
+        "frictionCoef": 155.3,
+        "inertia":15.4,
+        "pressureRatePSI": 75,
+        "damageThresholdTemperature": 1200,
+        "pressurePSI":[
+            //turbineRPM, pressure(PSI)
+            //turbineRPM, pressure(PSI)
+            [0,         -4],
+            [30000,     -2.5],
+            [60000,     3],
+            [90000,     15],
+            [150000,    20],
+            [200000,    70],
+            [250000,    98],
+            [300000,    150],
+        ],
+        "engineDef":[
+            //engineRPM, efficiency, exhaustFactor
+            [0,     0.0,    0.0],
+            [650,   0.15,   0.1],
+            [1400,  0.38,   0.4],
+            [2000,  0.40,    0.45],
+            [2500,  0.42,    0.49],
+            [2750,  0.48,    0.50],
+            [3000,  0.55,    0.58],
+            [4000,  0.84,    0.75],
+            [5000,  0.92,    0.8],
+            [6000,  1.0,    0.85],
+            [7000,  0.94,    0.95],
+            [8000,  0.90,    1.0],
+            [9000,  0.87,    1.0],
+        ],
+
+    },
+    "vehicleController": {
+        "revMatchThrottle":0.2,
+        "clutchLaunchStartRPM":2200,
+        "clutchLaunchTargetRPM":3100,
+    },
+    "mainEngine":{
+        "turbochargerLuaFileName" = "powertrain/ALSturbocharger",
+        "turbocharger":"turbocharger",
+        "instantAfterFireCoef": 0.1,
+        "sustainedAfterFireCoef": 0.1,
+		"sustainedAfterFireTime": 3,
+    },
+	"soundConfig": {
+        "$+intakeMuffling":-0.5,
+        "$+mainGain":1.5,
+        "$+maxLoadMix": 0.2,
+        "$+offLoadGain":-0.03,
+        "$+highShelfGain":2,
+    },
+    "soundConfigExhaust": {
+        "$+maxLoadMix": 0.2,
+        "$+minLoadMix": 0.0,
+        "$+mainGain": 1.5,
+        "$+offLoadGain": -0.03,
+    },
+    "vehicleController": {
+        "revMatchThrottle":0.2,
+        "clutchLaunchStartRPM":2200,
+        "clutchLaunchTargetRPM":3300,
+    },
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["autobello_sbr_biturbo_exhaust", ["autobello_sbr_manifold", "autobello_sbr_turbo"]],
+         ["autobello_sbr_biturbo_intercooler", ["autobello_sbr_intercooler"]],
+         ["autobello_sbr_biturbo_intake_pipes", ["autobello_sbr_intercooler", "autobello_sbr_intake", "autobello_sbr_turbo"]],
+         ["autobello_sbr_biturbo_filter", ["autobello_sbr_filter", "autobello_sbr_engine", "autobello_sbr_turbo"]],
+    ],
+    "nodes": [
+        ["id", "posX", "posY", "posZ"],
+        {"selfCollision":true},
+        {"collision":true},
+        //--exhaust
+        {"frictionCoef":0.5},
+        {"nodeMaterial":"|NM_METAL"},
+
+        {"nodeWeight":1.0},
+        {"group":"autobello_sbr_intake"},
+        ["tintk1", 0.0,1.33,0.667],
+
+        {"group":"autobello_sbr_filter"},
+        ["tintk2r",-0.334,1.296,0.709],
+        ["tintk2l", 0.334,1.296,0.709],
+
+        //intercooler
+        {"nodeWeight":1.0},
+        {"group":"autobello_sbr_intercooler"},
+        ["ic1r",-0.32,1.322,0.83],
+        ["ic1l",0.32,1.322,0.83],
+        ["ic2r",-0.26,1.555,0.90],
+        ["ic2l",0.26,1.555,0.9],
+        ["ic3",0.0,1.467,0.78],
+
+        //turbo
+        {"group":"autobello_sbr_turbo"},
+        {"nodeWeight":6.0},
+        ["trb1r",-0.217,1.528,0.657],
+        ["trb1l", 0.217,1.528,0.657],
+        ["trb2r",-0.177,1.726,0.657],
+        ["trb2l",0.177,1.726,0.657],
+        //exhaust tip
+        {"nodeWeight":1.0},
+        ["trb3r",-0.098,1.893,0.615, {"afterFireAudioCoef":1.0, "afterFireVisualCoef":1.0, "afterFireVolumeCoef":1.0, "afterFireMufflingCoef":1.0, "exhaustAudioMufflingCoef":1.0, "exhaustAudioGainChange":0}],
+        ["trb3l", 0.098,1.893,0.615, {"afterFireAudioCoef":1.0, "afterFireVisualCoef":1.0, "afterFireVolumeCoef":1.0, "afterFireMufflingCoef":1.0, "exhaustAudioMufflingCoef":1.0, "exhaustAudioGainChange":0}],
+
+        //manifold
+        {"nodeWeight":3.0},
+        {"group":"autobello_sbr_manifold"},
+        ["exm2r",-0.237,1.67,0.282],
+        ["exm2l",0.237,1.67,0.282],
+        {"group":""},
+    ],
+    "beams": [
+        ["id1:", "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1, "beamShortBound":1},
+        {"deformLimitExpansion":1.1},
+
+        //intake manifold
+        {"beamSpring":1201000,"beamDamp":75},
+        {"beamDeform":12000,"beamStrength":"FLT_MAX"},
+        ["tintk1", "e3l"],
+        ["tintk1", "e3r"],
+        ["tintk1", "e4l"],
+        ["tintk1", "e4r"],
+        ["tintk1", "e1l"],
+        ["tintk1", "e1r"],
+
+        //manifold
+        {"beamSpring":2501000,"beamDamp":125},
+        {"beamDeform":30000,"beamStrength":"FLT_MAX"},
+        ["exm1r", "exm2r", {"isExhaust":"mainEngine"}],
+        ["exm2r", "trb1r", {"isExhaust":"mainEngine"}],
+        ["exm1l", "exm2l", {"isExhaust":"mainEngine"}],
+        ["exm2l", "trb1l", {"isExhaust":"mainEngine"}],
+        ["exm2r", "e2r"],
+        ["exm2r", "e1r"],
+        ["exm2r", "e2l"],
+        ["exm2r", "e1l"],
+        ["exm2r", "e4r"],
+        ["exm2r", "e4l"],
+        ["exm2l", "e2r"],
+        ["exm2l", "e1r"],
+        ["exm2l", "e2l"],
+        ["exm2l", "e1l"],
+        ["exm2l", "e4r"],
+        ["exm2l", "e4l"],
+
+        //turbo
+        {"beamSpring":2501000,"beamDamp":125},
+        {"beamDeform":30000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        {"deformGroup":"mainEngine_turbo", "deformationTriggerRatio":0.001}
+        ["trb1r", "trb2r", {"isExhaust":"mainEngine"}],
+        ["trb1l", "trb2l", {"isExhaust":"mainEngine"}],
+        ["trb1r", "e4r"],
+        ["trb1r", "e4l"],
+        ["trb1r", "e3r"],
+        ["trb1r", "e3l"],
+        ["trb1r", "e2r"],
+        ["trb1r", "e1r"],
+        ["trb1r", "e2l"],
+        ["trb1r", "e1l"],
+        ["trb2r", "e4r"],
+        ["trb2r", "e4l"],
+        ["trb2r", "e3r"],
+        ["trb2r", "e3l"],
+        ["trb2r", "e2r"],
+        ["trb2r", "e1r"],
+        ["trb2r", "e2l"],
+        ["trb2r", "e1l"],
+        ["trb1l", "e4r"],
+        ["trb1l", "e4l"],
+        ["trb1l", "e3r"],
+        ["trb1l", "e3l"],
+        ["trb1l", "e2r"],
+        ["trb1l", "e1r"],
+        ["trb1l", "e2l"],
+        ["trb1l", "e1l"],
+        ["trb2l", "e4r"],
+        ["trb2l", "e4l"],
+        ["trb2l", "e3r"],
+        ["trb2l", "e3l"],
+        ["trb2l", "e2r"],
+        ["trb2l", "e1r"],
+        ["trb2l", "e2l"],
+        ["trb2l", "e1l"],
+
+        //exhaust tip
+        {"beamSpring":501000,"beamDamp":125},
+        {"beamDeform":30000,"beamStrength":"FLT_MAX"},
+        ["trb2r", "trb3r", {"isExhaust":"mainEngine"}],
+        ["trb2l", "trb3l", {"isExhaust":"mainEngine"}],
+        ["trb3r", "trb1r"],
+        ["trb3l", "trb1l"],
+        ["trb3r", "e4r"],
+        ["trb3r", "e2r"],
+        ["trb3r", "e2l"],
+        ["trb3r", "e4l"],
+        ["trb3l", "e4r"],
+        ["trb3l", "e2r"],
+        ["trb3l", "e2l"],
+        ["trb3l", "e4l"],
+
+        //intercooler
+        {"beamSpring":501000,"beamDamp":100},
+        {"beamDeform":15000,"beamStrength":"FLT_MAX"},
+        {"deformGroup":"mainEngine_intercooler", "deformationTriggerRatio":0.02}
+        ["ic1l", "ic2l"],
+        ["ic2l", "ic2r"],
+        ["ic2r", "ic1r"],
+        ["ic1r", "ic1l"],
+        ["ic1l", "ic2r"],
+        ["ic1r", "ic2l"],
+        ["ic2l", "ic3"],
+        ["ic3", "ic1l"],
+        ["ic2r", "ic3"],
+        ["ic3", "ic1r"],
+        {"deformGroup":""}
+
+        //attach
+        {"beamSpring":301000,"beamDamp":20},
+        {"beamDeform":7000,"beamStrength":"FLT_MAX"},
+        ["ic1l", "m6l"],
+        ["ic2l", "m5l"],
+        ["ic2l", "m6l"],
+        ["ic1l", "m5l"],
+        ["ic1l", "q8ll"],
+        ["ic2l", "q8ll"],
+        ["ic1r", "m6r"],
+        ["ic2r", "m5r"],
+        ["ic2r", "m6r"],
+        ["ic1r", "m5r"],
+        ["ic1r", "q8rr"],
+        ["ic2r", "q8rr"],
+
+        //piping
+        {"beamSpring":101000,"beamDamp":60},
+        {"beamDeform":8000,"beamStrength":22000},
+        {"deformGroup":"mainEngine_piping", "deformationTriggerRatio":0.25}
+        ["ic1l", "tintk1"],
+        ["ic2l", "tintk1"],
+        ["ic1r", "tintk1"],
+        ["ic2r", "tintk1"],
+
+        ["ic1l", "trb1r"],
+        ["ic2l", "trb1r"],
+        ["ic1r", "trb1r"],
+        ["ic2r", "trb1r"],
+
+        ["ic1l", "trb1l"],
+        ["ic2l", "trb1l"],
+        ["ic1r", "trb1l"],
+        ["ic2r", "trb1l"],
+        {"deformGroup":""}
+
+        //filter
+        {"beamSpring":501000,"beamDamp":60},
+        {"beamDeform":5000,"beamStrength":3000},
+        ["tintk2r", "trb1r"],
+        ["tintk2r", "e3r"],
+        ["tintk2r", "e4r"],
+        ["tintk2r", "e3l"],
+        ["tintk2r", "e4l"],
+
+        ["tintk2l", "trb1l"],
+        ["tintk2l", "e3r"],
+        ["tintk2l", "e4r"],
+        ["tintk2l", "e3l"],
+        ["tintk2l", "e4l"],
+
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1, "beamShortBound":1},
+    ],
+    "triangles": [
+            ["id1:","id2:","id3:"],
+            {"group":"autobello_sbr_turbo"},
+            {"groundModel":"metal"},
+            {"dragCoef":6},
+            //intercooler
+            ["ic1l", "ic2l", "ic2r"],
+            ["ic2r", "ic1r", "ic1l"],
+            ["ic2l", "ic3", "ic2r"],
+            ["ic2r", "ic3", "ic1r"],
+            ["ic1r", "ic3", "ic1l"],
+            ["ic1l", "ic3", "ic2l"],
+
+            //turbo
+            {"triangleType":"NONCOLLIDABLE"},
+            ["exm2l", "e2l", "exm2r"],
+            ["exm2r", "e2l", "e2r"],
+            ["trb1l", "trb2l", "trb2r"],
+            ["trb1l", "trb2r", "trb1r"],
+            ["trb2l", "trb3l", "trb3r"],
+            ["trb3r", "trb2r", "trb2l"],
+            {"triangleType":"NORMALTYPE"},
+            {"group":""},
+    ],
+},
+}
