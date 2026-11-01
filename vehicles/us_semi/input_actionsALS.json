@@ -1,5 +1,0 @@
-{
-    "toggle_ALS":{"order":  7,  "onDown":"electrics.values.ALS_toggle = 1-(electrics.values.ALS_toggle or 0)", "onUp":"custom_inputs.printK()", "title": "ALS toggle", "desc": "Toggles ALS" },
-    "toggle_scramble":{"order":  8,  "onDown":"electrics.values.scramble = 1-(electrics.values.scramble or 0)", "onUp":"custom_inputs.printO()", "title": "Scramble button", "desc": "Scrumble the boost by an ammount " },
-    "rollingAL":{"order":  8,  "onDown":"custom_inputs.toggleRALS(1)", "onUp":"custom_inputs.toggleRALS(0)", "title": "Rolling Anti Lag", "desc": "Enables Rolling Anti Lag" }
-}

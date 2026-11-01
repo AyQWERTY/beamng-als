@@ -7,6 +7,14 @@
     }
     "slotType" : "bolide_intake",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],

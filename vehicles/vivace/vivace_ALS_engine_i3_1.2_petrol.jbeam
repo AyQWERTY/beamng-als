@@ -7,6 +7,14 @@
     }
     "slotType" : "vivace_intake_i3_1.2_petrol",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
     "slots": [
         ["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -190,6 +198,14 @@
         "value":1100,
     },
     "slotType" : "vivace_engine_ecu_i3_1.2",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
         ["$revLimiterVar", "range", "rpm", "Engine", 6300, 5000, 8000, "RPM Limit", "RPM where the rpm limiter prevents further revving"{"stepDis":50}],

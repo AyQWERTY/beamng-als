@@ -1,49 +1,18 @@
 {
-"name":"Tastiera",
-"version":1,
-"devicetype":"keyboard",
-"vidpid":"6F1D2B61",
-"bindings":[
-  {
-    "control":"u",
-    "action":"rollingAL"
-  },
-  {
-    "action":"toggle_scramble",
-    "control":"+"
-  },
-  {
-    "control":"k",
-    "action":"toggle_tcc"
-  },
-  {
-    "action":"hydraulics_jump_full",
-    "control":"y"
-  },
-  {
-    "control":"f",
-    "action":"hydraulics_jump_left"
-  },
-  {
-    "control":"h",
-    "action":"hydraulics_jump_right"
-  },
-  {
-    "control":"t",
-    "action":"hydraulics_jump_front"
-  },
-  {
-    "control":"g",
-    "action":"hydraulics_jump_rear"
-  },
-  {
-    "control":"u",
-    "action":"hydraulics_lower_full"
-  },
-  {
-    "control":"o",
-    "action":"hydraulics_raise_full"
-  },
-],
-"guid":"{6F1D2B61-D5A0-11CF-BFC7-444553540000}"
+  "displayName": "Keyboard - ALS",
+  "imagePack": "keyboard",
+  "bindings": [
+    {
+      "control": "k",
+      "action": "als_toggle"
+    },
+    {
+      "control": "+",
+      "action": "als_scramble"
+    },
+    {
+      "control": "u",
+      "action": "als_rolling"
+    }
+  ]
 }

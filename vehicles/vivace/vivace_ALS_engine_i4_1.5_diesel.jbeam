@@ -7,6 +7,14 @@
     }
     "slotType" : "vivace_turbo_i4_1.5_diesel",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
     "slots": [
         ["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -188,6 +196,14 @@
         "value":800,
     },
     "slotType" : "vivace_engine_ecu_i4_1.5_diesel",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "slots": [
         ["type", "default", "description"],
         ["vivace_engine_ecu_i4_1.5_diesel_speedlimit","vivace_engine_ecu_i4_1.5_diesel_speedlimit_210", "Speed Limiter", {"coreSlot":true}],

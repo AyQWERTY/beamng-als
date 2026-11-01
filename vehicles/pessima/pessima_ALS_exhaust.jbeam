@@ -6,6 +6,14 @@
         "value":900,
     }
     "slotType" : "pessima_exhaust",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
 // The exhaust it's here only to meke some sparks while i'm trying to figure out how to make them with lua
     "mainEngine":{
         "torqueModExhaust":[

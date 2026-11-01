@@ -7,6 +7,14 @@
     }
     "slotType" : "pickup_intake_i6",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -93,6 +101,14 @@
     }
     "slotType" : "pickup_intake_v8",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -178,6 +194,14 @@
         "value":3000,
     }
     "slotType" : "pickup_intake_v8_diesel",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
 
 	"slots": [
 		["type", "default", "description"],

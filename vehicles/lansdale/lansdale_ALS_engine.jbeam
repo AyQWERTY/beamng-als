@@ -7,6 +7,14 @@
     }
     "slotType" : "lansdale_intake_v8",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -92,6 +100,14 @@
         "value":3000,
     }
     "slotType" : "lansdale_intake_v6",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
 
 	"slots": [
 		["type", "default", "description"],
@@ -179,6 +195,14 @@
     }
     "slotType" : "lansdale_intake_v6_large",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -265,6 +289,14 @@
     }
     "slotType" : "lansdale_intake_i4_diesel",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -348,6 +380,14 @@
         "value":3000,
     }
     "slotType" : "lansdale_intake_i4",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
 
 	"slots": [
 		["type", "default", "description"],

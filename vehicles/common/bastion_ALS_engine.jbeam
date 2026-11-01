@@ -7,6 +7,14 @@
     }
     "slotType" : "bastion_v6_intake",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -234,6 +242,14 @@
         "value":3000,
     }
     "slotType" : "bastion_v8_intake",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
 
 	"slots": [
 		["type", "default", "description"],

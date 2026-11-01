@@ -7,6 +7,14 @@
     }
     "slotType" : "etk_intake_i4_2.0_petrol",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -123,6 +131,14 @@
     }
     "slotType" : "etk_intake_i4_2.0_diesel",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -236,6 +252,14 @@
         "value":3000,
     }
     "slotType" : "etk_intake_i6_3.0_petrol",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
 
     	"slots": [
 		["type", "default", "description"],
@@ -353,6 +377,14 @@
     }
     "slotType" : "etk_intake_i6_3.0_diesel",
 
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
+
     	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -466,6 +498,14 @@
         "value":3000,
     }
     "slotType" : "etk_intake_v8_4.4_petrol",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
 
     	"slots": [
 		["type", "default", "description"],
@@ -744,6 +784,14 @@
         "value":1500,
     },
     "slotType" : "etk_engine_i4_2.0_ecu",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -760,6 +808,14 @@
         "value":1500,
     },
     "slotType" : "etk_engine_i4_2.0_diesel_ecu",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -776,6 +832,14 @@
         "value":2500,
     },
     "slotType" : "etk_engine_i6_3.0_petrol_ecu",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -793,6 +857,14 @@
         "value":1500,
     },
     "slotType" : "etk_engine_i6_3.0_diesel_ecu",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -809,6 +881,14 @@
         "value":1500,
     },
     "slotType" : "etk_engine_v8_4.4_petrol_ecu",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -826,6 +906,14 @@
         "value":1500,
     },
     "slotType" : "etk_engine_v8_4.4_petrol_ecu",
+
+    "actionsEnabled": [
+        ["id"],
+        ["als_toggle"],
+        ["als_scramble"],
+        ["als_rolling"],
+    ],
+
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
