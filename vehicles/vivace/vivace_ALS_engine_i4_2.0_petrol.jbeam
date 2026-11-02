@@ -6,14 +6,27 @@
         "value":3000,
     }
     "slotType" : "vivace_intake_i4_2.0_petrol",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 
     "slots": [
         ["type", "default", "description"],
@@ -21,6 +34,7 @@
         ["TurboNormalization", "Empty", "Turbo Normalization"],
     ],
     "turbocharger": {
+        "maxAntilagPower": 13560,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -199,14 +213,6 @@
         "value":2300,
     },
     "slotType" : "vivace_engine_ecu_i4_2.0",
-
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-
     "variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
         ["$revLimiterVar", "range", "rpm", "Engine", 6300, 5000, 8000, "RPM Limit", "RPM where the rpm limiter prevents further revving"{"stepDis":50}],

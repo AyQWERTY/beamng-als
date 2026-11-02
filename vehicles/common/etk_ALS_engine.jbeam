@@ -6,14 +6,27 @@
         "value":3000,
     }
     "slotType" : "etk_intake_i4_2.0_petrol",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 
 	"slots": [
 		["type", "default", "description"],
@@ -25,6 +38,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13560,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -129,14 +143,27 @@
         "value":3000,
     }
     "slotType" : "etk_intake_i4_2.0_diesel",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 
 	"slots": [
 		["type", "default", "description"],
@@ -148,6 +175,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13320,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -250,14 +278,27 @@
         "value":3000,
     }
     "slotType" : "etk_intake_i6_3.0_petrol",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 
     	"slots": [
 		["type", "default", "description"],
@@ -269,6 +310,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13320,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -373,14 +415,27 @@
         "value":3000,
     }
     "slotType" : "etk_intake_i6_3.0_diesel",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 
     	"slots": [
 		["type", "default", "description"],
@@ -392,6 +447,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13320,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -494,14 +550,27 @@
         "value":3000,
     }
     "slotType" : "etk_intake_v8_4.4_petrol",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 
     	"slots": [
 		["type", "default", "description"],
@@ -513,6 +582,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13560,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -779,14 +849,6 @@
         "value":1500,
     },
     "slotType" : "etk_engine_i4_2.0_ecu",
-
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -803,14 +865,6 @@
         "value":1500,
     },
     "slotType" : "etk_engine_i4_2.0_diesel_ecu",
-
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -827,14 +881,6 @@
         "value":2500,
     },
     "slotType" : "etk_engine_i6_3.0_petrol_ecu",
-
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -852,14 +898,6 @@
         "value":1500,
     },
     "slotType" : "etk_engine_i6_3.0_diesel_ecu",
-
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -876,14 +914,6 @@
         "value":1500,
     },
     "slotType" : "etk_engine_v8_4.4_petrol_ecu",
-
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],
@@ -901,14 +931,6 @@
         "value":1500,
     },
     "slotType" : "etk_engine_v8_4.4_petrol_ecu",
-
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-
     "slots": [
         ["type", "default", "description"],
         ["etk_engine_ecu_speedlimit","etk_engine_ecu_speedlimit_off", "Speed Limiter", {"coreSlot":true}],

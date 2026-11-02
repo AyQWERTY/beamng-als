@@ -6,14 +6,27 @@
         "value":14600,
     },
     "slotType" : "scintilla_intake_v8",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
     //"flexbodies": [
     //     ["mesh", "[group]:", "nonFlexMaterials"],
     //     ["scintilla_intake", ["scintilla_engine", "scintilla_engine_intake"]],
@@ -37,6 +50,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
     ],
     "turbocharger": {
+        "maxAntilagPower": 5340,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_03>turbo_bov_race",
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_03>turbo_hiss_race",
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_03>turbo_spin_race",

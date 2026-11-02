@@ -6,14 +6,27 @@
         "value":3000,
     }
     "slotType" : "covet_intake_1.3",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -26,6 +39,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13560,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -198,14 +212,27 @@
         "value":3000,
     }
     "slotType" : "covet_intake",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -218,6 +245,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13560,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -389,14 +417,27 @@
         "value":3000,
     }
     "slotType" : "covet_intake_2.0",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -409,6 +450,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13560,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -587,14 +629,27 @@
         "value":3000,
     }
     "slotType" : "covet_intake_midengine",
-
+    // ALS wiring - do not edit by hand
     "actionsEnabled": [
         ["id"],
         ["als_toggle"],
         ["als_scramble"],
         ["als_rolling"],
     ],
-
+    "controller": [
+        ["fileName"],
+        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
+    ],
+    "alsAntiLag": {
+        "turboTargetRPM": 90000,
+        "minActiveEngineRPM": 1500,
+        "minActiveWheelSpeed": 1,
+        "maxActiveThrottleInput": 0.2,
+        "minActiveBrakeInput": 0.2,
+        "timeoutTime": 30,
+        "timeoutResetTime": 2,
+    },
+    // end of ALS wiring
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],
@@ -605,6 +660,7 @@
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
+        "maxAntilagPower": 13320,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
