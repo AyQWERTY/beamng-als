@@ -23,6 +23,8 @@ local scrambling = false
 local scrambleClock = 0
 local scramblePhase = false
 local alsWasActive = false
+local alsWasEnabled = false
+local rollingWasActive = false
 
 local function setWastegateOffset(offset)
     if controlledTurbocharger and controlledTurbocharger.setWastegateOffset then
@@ -39,15 +41,22 @@ local function updateGFX(dt)
     rolling = electrics.values.rollingALS == 1
     scrambling = enabled and electrics.values.scramble == 1
 
-    if not enabled then
-        base.setAntilagState("off")
-        setWastegateOffset(0)
-    elseif rolling and controlledEngine and controlledEngine.outputAV1 >= MIN_ENGINE_AV then
-        -- Held key: keep the anti-lag engaged regardless of the throttle input.
-        base.setAntilagState("manualOverride")
-    else
-        -- Let vanilla arm and disengage the system on its own.
-        base.setAntilagState("idle")
+    -- The vanilla state machine is only entered on the edges of the hotkey
+    -- state: forcing "idle" every frame would reset the arming timer and the
+    -- system would never engage.
+    if enabled ~= alsWasEnabled then
+        alsWasEnabled = enabled
+        base.setAntilagState(enabled and "idle" or "off")
+    end
+
+    if enabled and rolling and controlledEngine and controlledEngine.outputAV1 >= MIN_ENGINE_AV then
+        if not rollingWasActive then
+            rollingWasActive = true
+            base.setAntilagState("manualOverride")
+        end
+    elseif rollingWasActive then
+        rollingWasActive = false
+        base.setAntilagState(enabled and "idle" or "off")
     end
 
     if scrambling and electrics.values.alsActive then
