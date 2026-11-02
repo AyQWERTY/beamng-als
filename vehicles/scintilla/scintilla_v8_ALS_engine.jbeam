@@ -90,7 +90,6 @@
         ],
     },
     "mainEngine":{
-        "turbochargerLuaFileName" = "powertrain/ALSturbocharger",
         //turbocharger name
         "turbocharger":"turbocharger",
         "$*instantAfterFireCoef": 5.0,

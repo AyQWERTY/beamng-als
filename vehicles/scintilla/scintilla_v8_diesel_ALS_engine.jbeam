@@ -75,7 +75,6 @@
         ],
     },
     "mainEngine": {
-        "turbochargerLuaFileName" = "powertrain/ALSturbocharger",
         //turbocharger name
         "turbocharger":"turbocharger",
         "$+particulates":0.6,

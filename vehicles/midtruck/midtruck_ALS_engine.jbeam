@@ -85,7 +85,6 @@
         "clutchLaunchTargetRPM":3100,
     },
     "mainEngine":{
-        "turbochargerLuaFileName" = "powertrain/ALSturbocharger",
         "turbocharger":"turbocharger",
         "instantAfterFireCoef": 0.1,
         "sustainedAfterFireCoef": 0.1,
@@ -384,7 +383,6 @@
         "clutchLaunchTargetRPM":3100,
     },
     "mainEngine":{
-        "turbochargerLuaFileName" = "powertrain/ALSturbocharger",
         "turbocharger":"turbocharger",
         "instantAfterFireCoef": 0.1,
         "sustainedAfterFireCoef": 0.1,
