@@ -1,0 +1,9 @@
+{
+  "displayName": "Keyboard - ALS",
+  "imagePack": "keyboard",
+  "bindings": [
+    { "control": "k", "action": "als_toggle" },
+    { "control": "+", "action": "als_scramble" },
+    { "control": "u", "action": "als_rolling" }
+  ]
+}

@@ -20,8 +20,8 @@ local enabled = false
 local rolling = false
 local scrambling = false
 local scrambleBoostPsi = DEFAULT_SCRAMBLE_BOOST_PSI
+local appliedOffset = 0
 local alsWasEnabled = false
-local alsWasScrambling = false
 local rollingWasActive = false
 
 local function updateGFX(dt)
@@ -53,12 +53,13 @@ local function updateGFX(dt)
 
     base.updateGFX(dt)
 
-    -- Scramble is boost control, not anti-lag: it lifts the wastegate target so
-    -- the turbo builds more boost until the key is pressed again. A wastegate
-    -- actuator cannot follow a fast pulse, so the offset is held, not pulsed.
-    if scrambling ~= alsWasScrambling then
-        alsWasScrambling = scrambling
-        controlledTurbocharger.setWastegateOffset(scrambling and scrambleBoostPsi or 0)
+    -- The wastegate slider moves the set point in the part data; scramble can
+    -- only add an offset on top of it, and that offset yields extra boost only
+    -- while the turbo still has headroom in its own pressure curve.
+    local offset = scrambling and scrambleBoostPsi or 0
+    if offset ~= appliedOffset then
+        appliedOffset = offset
+        controlledTurbocharger.setWastegateOffset(offset)
     end
 end
 
@@ -66,9 +67,9 @@ local function reset()
     enabled = false
     rolling = false
     scrambling = false
-    alsWasScrambling = false
-    rollingWasActive = false
-    if controlledTurbocharger then
+    alsWasEnabled = false
+    appliedOffset = 0
+    if controlledTurbocharger and controlledTurbocharger.isExisting then
         controlledTurbocharger.setWastegateOffset(0)
     end
     if base then
@@ -88,8 +89,11 @@ local function init(data)
 
     controlledEngine = powertrain.getDevice(data.controlledEngine or "mainEngine")
     controlledTurbocharger = controlledEngine and controlledEngine.turbocharger
-    if not controlledEngine or not controlledTurbocharger then
+    -- An engine without a turbo still gets a stub turbocharger device, so the
+    -- isExisting flag is the only reliable test.
+    if not controlledEngine or not controlledTurbocharger or not controlledTurbocharger.isExisting then
         log("W", "als_antiLag", "The controlled engine has no turbocharger, anti-lag will not work")
+        controlledTurbocharger = nil
         base = nil
         return
     end
