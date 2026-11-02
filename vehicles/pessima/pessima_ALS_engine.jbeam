@@ -19,6 +19,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -27,6 +28,10 @@
         "timeoutResetTime": 2,
     },
     // end of ALS wiring
+    "variables": [
+        ["name", "type", "unit", "category", "default", "min", "max", "title", "description"],
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
+    ],
 	"slots": [
 		["type", "default", "description"],
         ["ALSboostController","NoBBG", "Boost Controller", {"coreSlot":true}],

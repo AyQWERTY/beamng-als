@@ -19,6 +19,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -35,6 +36,7 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
@@ -156,6 +158,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -172,6 +175,7 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
@@ -291,6 +295,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -307,6 +312,7 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
@@ -415,27 +421,6 @@
         "value":3000,
     }
     "slotType" : "etk_intake_i6_3.0_diesel",
-    // ALS wiring - do not edit by hand
-    "actionsEnabled": [
-        ["id"],
-        ["als_toggle"],
-        ["als_scramble"],
-        ["als_rolling"],
-    ],
-    "controller": [
-        ["fileName"],
-        ["powertrainControl/als_antiLag", {"name": "alsAntiLag"}],
-    ],
-    "alsAntiLag": {
-        "turboTargetRPM": 90000,
-        "minActiveEngineRPM": 1500,
-        "minActiveWheelSpeed": 1,
-        "maxActiveThrottleInput": 0.2,
-        "minActiveBrakeInput": 0.2,
-        "timeoutTime": 30,
-        "timeoutResetTime": 2,
-    },
-    // end of ALS wiring
 
     	"slots": [
 		["type", "default", "description"],
@@ -444,10 +429,10 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
-        "maxAntilagPower": 13320,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"
@@ -563,6 +548,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -579,10 +565,11 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
-        "maxAntilagPower": 13560,
+        "maxAntilagPower": 13320,
         "bovSoundFileName":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_bov"
         "hissLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_hiss"
         "whineLoopEvent":"event:>Vehicle>Forced_Induction>Turbo_05>turbo_spin"

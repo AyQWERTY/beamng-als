@@ -9,9 +9,8 @@
 local M = {}
 M.type = "auxiliary"
 
-local SCRAMBLE_INTERVAL = 0.25 -- seconds per pulse while scrambling
-local SCRAMBLE_OFFSET = 5      -- PSI added to the wastegate target while scrambling
-local MIN_ENGINE_AV = 50       -- below this the engine is not running, so ALS cannot hold
+local DEFAULT_SCRAMBLE_BOOST_PSI = 10 -- PSI added to the wastegate target while scrambling
+local MIN_ENGINE_AV = 50              -- below this the engine is not running, so ALS cannot hold
 
 local base = nil
 local controlledEngine = nil
@@ -20,26 +19,19 @@ local controlledTurbocharger = nil
 local enabled = false
 local rolling = false
 local scrambling = false
-local scrambleClock = 0
-local scramblePhase = false
-local alsWasActive = false
+local scrambleBoostPsi = DEFAULT_SCRAMBLE_BOOST_PSI
 local alsWasEnabled = false
+local alsWasScrambling = false
 local rollingWasActive = false
-
-local function setWastegateOffset(offset)
-    if controlledTurbocharger and controlledTurbocharger.setWastegateOffset then
-        controlledTurbocharger.setWastegateOffset(offset)
-    end
-end
 
 local function updateGFX(dt)
     if not base then
         return
     end
 
-    enabled = electrics.values.ALS_toggle == 1
-    rolling = electrics.values.rollingALS == 1
-    scrambling = enabled and electrics.values.scramble == 1
+    enabled = electrics.values.alsEnabled == 1
+    rolling = electrics.values.alsRolling == 1
+    scrambling = electrics.values.alsScramble == 1
 
     -- The vanilla state machine is only entered on the edges of the hotkey
     -- state: forcing "idle" every frame would reset the arming timer and the
@@ -59,25 +51,14 @@ local function updateGFX(dt)
         base.setAntilagState(enabled and "idle" or "off")
     end
 
-    if scrambling and electrics.values.alsActive then
-        scrambleClock = scrambleClock + dt
-        if scrambleClock >= SCRAMBLE_INTERVAL then
-            scrambleClock = 0
-            scramblePhase = not scramblePhase
-        end
-        setWastegateOffset(scramblePhase and SCRAMBLE_OFFSET or 0)
-    else
-        scrambleClock = 0
-        scramblePhase = false
-        setWastegateOffset(0)
-    end
-
     base.updateGFX(dt)
 
-    local alsActive = electrics.values.alsActive
-    if alsActive ~= alsWasActive then
-        alsWasActive = alsActive
-        guihooks.message(alsActive and "Anti-lag engaged" or "Anti-lag released", 3, "ALS")
+    -- Scramble is boost control, not anti-lag: it lifts the wastegate target so
+    -- the turbo builds more boost until the key is pressed again. A wastegate
+    -- actuator cannot follow a fast pulse, so the offset is held, not pulsed.
+    if scrambling ~= alsWasScrambling then
+        alsWasScrambling = scrambling
+        controlledTurbocharger.setWastegateOffset(scrambling and scrambleBoostPsi or 0)
     end
 end
 
@@ -85,10 +66,11 @@ local function reset()
     enabled = false
     rolling = false
     scrambling = false
-    scrambleClock = 0
-    scramblePhase = false
-    alsWasActive = false
-    setWastegateOffset(0)
+    alsWasScrambling = false
+    rollingWasActive = false
+    if controlledTurbocharger then
+        controlledTurbocharger.setWastegateOffset(0)
+    end
     if base then
         base.reset()
     end
@@ -100,14 +82,22 @@ local function init(data)
         log("W", "als_antiLag", "Vanilla anti-lag controller is missing, anti-lag will not work")
         return
     end
-    base.init(data)
+    -- The vanilla controller reads its own name for telemetry, and it is not
+    -- registered as a controller here, so nobody sets it for us.
+    base.name = "antiLag"
 
     controlledEngine = powertrain.getDevice(data.controlledEngine or "mainEngine")
     controlledTurbocharger = controlledEngine and controlledEngine.turbocharger
-    if not controlledTurbocharger or not controlledTurbocharger.isExisting then
+    if not controlledEngine or not controlledTurbocharger then
         log("W", "als_antiLag", "The controlled engine has no turbocharger, anti-lag will not work")
         base = nil
+        return
     end
+
+    scrambleBoostPsi = tonumber(data.scrambleBoostPsi) or DEFAULT_SCRAMBLE_BOOST_PSI
+    base.init(data)
+    -- Anti-lag is on as soon as the part is installed, the hotkey turns it off.
+    electrics.values.alsEnabled = 1
 end
 
 M.init = init

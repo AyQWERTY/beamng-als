@@ -19,6 +19,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -36,6 +37,7 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
@@ -225,6 +227,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -242,6 +245,7 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
@@ -430,6 +434,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -447,6 +452,7 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
@@ -642,6 +648,7 @@
     ],
     "alsAntiLag": {
         "turboTargetRPM": 90000,
+        "scrambleBoostPsi": "$scramblePressure",
         "minActiveEngineRPM": 1500,
         "minActiveWheelSpeed": 1,
         "maxActiveThrottleInput": 0.2,
@@ -657,6 +664,7 @@
     ],
 	"variables": [
         ["name", "type", "unit", "category", "default", "min", "max", "title", "description"]
+        ["$scramblePressure", "range", "psi", "Engine", 10, 0, 50, "Scramble Pressure", "Added pressure when the Scramble button is pressed"{"stepDis":0.1}],
         ["$ALSDuration", "range", "s", "Engine", 2, 0.5, 10, "ALS duration", "ALS duration in seconds"{"stepDis":0.5}],
 	],
     "turbocharger": {
