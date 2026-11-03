@@ -12,6 +12,11 @@ M.type = "auxiliary"
 local DEFAULT_SCRAMBLE_BOOST_PSI = 10 -- PSI added to the wastegate target while scrambling
 local MIN_ENGINE_AV = 50              -- below this the engine is not running, so ALS cannot hold
 
+-- The vanilla sustained afterfire burns 1000000 fuel per second, so the stock
+-- coefficients of 0.5-1.75 never build up enough for the pipe to pop.
+local POPCORN_COEF = 80
+local POPCORN_WINDOW = 4 -- seconds the sustained window is held open while coasting
+
 local base = nil
 local controlledEngine = nil
 local controlledTurbocharger = nil
@@ -23,6 +28,8 @@ local scrambleBoostPsi = DEFAULT_SCRAMBLE_BOOST_PSI
 local appliedOffset = 0
 local alsWasEnabled = false
 local rollingWasActive = false
+local stockSustainedCoef = 0
+local crackling = false
 
 local function updateGFX(dt)
     if not base then
@@ -53,6 +60,21 @@ local function updateGFX(dt)
 
     base.updateGFX(dt)
 
+    -- alsActive is the state machine saying it is actually holding the turbo, so a
+    -- fitted but unarmed part stays silent. How loud the pop is stays the decision
+    -- of the exhaust nodes, so a muffled system stays quiet.
+    if controlledEngine then
+        local crackle = enabled and electrics.values.alsActive
+        if crackle ~= crackling then
+            crackling = crackle
+            controlledEngine.sustainedAfterFireCoef = crackle and POPCORN_COEF or stockSustainedCoef
+        end
+        if crackling then
+            -- Without this the sustained window closes after the stock 1.5 seconds.
+            controlledEngine.sustainedAfterFireTimer = POPCORN_WINDOW
+        end
+    end
+
     -- The wastegate slider moves the set point in the part data; scramble can
     -- only add an offset on top of it, and that offset yields extra boost only
     -- while the turbo still has headroom in its own pressure curve.
@@ -69,6 +91,10 @@ local function reset()
     scrambling = false
     alsWasEnabled = false
     appliedOffset = 0
+    crackling = false
+    if controlledEngine then
+        controlledEngine.sustainedAfterFireCoef = stockSustainedCoef
+    end
     if controlledTurbocharger and controlledTurbocharger.isExisting then
         controlledTurbocharger.setWastegateOffset(0)
     end
@@ -99,6 +125,7 @@ local function init(data)
     end
 
     scrambleBoostPsi = tonumber(data.scrambleBoostPsi) or DEFAULT_SCRAMBLE_BOOST_PSI
+    stockSustainedCoef = controlledEngine.sustainedAfterFireCoef or 0
     base.init(data)
     -- Anti-lag is on as soon as the part is installed, the hotkey turns it off.
     electrics.values.alsEnabled = 1

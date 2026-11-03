@@ -36,6 +36,7 @@ DEFAULT_TARGET_RPM = 90000
 DEFAULT_SCRAMBLE_PSI = 10
 DEFAULT_SCRAMBLE_MAX = 30
 DEFAULT_WASTEGATE_MAX = 15
+AFTERFIRE_VISUAL_THRESHOLD = 20000  # the stock 150000 gates out the flames
 AUTO_ARM_RATIO = 0.7  # vanilla default 5000 RPM on a ~7000 RPM engine
 AUTO_DISARM_RATIO = 0.43  # vanilla default 3000 RPM on the same engine
 MIN_ACTIVE_RATIO = 0.35  # vanilla default 2000 RPM
@@ -358,6 +359,10 @@ def als_variant(node, turbo, rpm, merge_after, stock_tunable, max_rpm):
     section["maxAntilagPower"] = antilag_power(turbo, rpm)
     boost_span = wastegate_override(section, turbo, merge_after, stock_tunable)
     part["turbocharger"] = section
+
+    engine: dict = part.get("mainEngine") or {}
+    engine["afterFireVisualThresholdSustained"] = AFTERFIRE_VISUAL_THRESHOLD
+    part["mainEngine"] = engine
 
     variables = part.get("variables") or []
     if not variables or not isinstance(variables[0], list):
