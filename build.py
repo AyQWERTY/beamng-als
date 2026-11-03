@@ -6,7 +6,9 @@ game update only needs a re-run of this script. The hand written parts (lua,
 input actions, key bindings) live in src/ and are copied as they are.
 
 Usage:
-    python build.py "C:/Program Files (x86)/Steam/steamapps/common/BeamNG.drive"
+    python build.py                 # build into build/
+    python build.py --install       # build straight into the game's unpacked mods
+    python build.py <game path>     # override the auto-detected game directory
 
 How it works:
   1. index every node of every jbeam in content/vehicles/*.zip;
@@ -19,7 +21,9 @@ How it works:
 
 import argparse
 import json
+import os
 import shutil
+import winreg
 import zipfile
 from collections import defaultdict
 from copy import deepcopy
@@ -29,6 +33,7 @@ from sjson import decode
 
 MOD = Path(__file__).resolve().parent
 SRC = MOD / "src"
+GAME = "BeamNG.drive"
 
 RPM_TO_AV = 0.10471971768
 ANTILAG_MARGIN = 1.5
@@ -46,6 +51,31 @@ ACTIONS = ["als_toggle", "als_scramble", "als_rolling", "als_launch"]
 INPUTMAP = "keyboardALS.json"
 CONTROLLER = "powertrainControl/als_antiLag"
 VANILLA_CONTROLLER = "powertrainControl/antiLag"
+
+
+def find_game():
+    """The BeamNG.drive install: Steam's registry entry, then its library, then
+    the default install paths."""
+    candidates = []
+    uninstall = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 284160"
+    try:
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, uninstall) as key:
+            candidates.append(Path(winreg.QueryValueEx(key, "InstallLocation")[0]))
+    except OSError:
+        pass
+    try:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Valve\Steam") as key:
+            steam = Path(winreg.QueryValueEx(key, "SteamPath")[0])
+        candidates.append(steam / "steamapps" / "common" / GAME)
+    except OSError:
+        pass
+    for root in ("C:/Program Files/Steam", "C:/Program Files (x86)/Steam"):
+        candidates.append(Path(root) / "steamapps" / "common" / GAME)
+
+    for game in candidates:
+        if game.is_dir():
+            return game
+    return None
 
 
 def load_nodes(game):
@@ -488,20 +518,32 @@ def copy_tree(source, target):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate the ALS mod.")
-    parser.add_argument("game", help="BeamNG game directory")
     parser.add_argument(
-        "-o", "--out", default=str(MOD / "build"), help="output directory"
+        "game", nargs="?", help="BeamNG game directory, auto-detected when omitted"
+    )
+    parser.add_argument(
+        "--install",
+        action="store_true",
+        help="write straight into the game's unpacked mods folder instead of build/",
     )
     args = parser.parse_args()
 
-    build = Path(args.out).resolve()
-    if build == MOD.resolve():
-        raise SystemExit("refusing to wipe the mod source directory")
+    game = Path(args.game) if args.game else find_game()
+    if game is None:
+        raise SystemExit(
+            "BeamNG.drive not found, pass the game directory as an argument"
+        )
+
+    user = Path(os.environ["LOCALAPPDATA"]) / "BeamNG" / GAME
+    build = (
+        user / "current" / "mods" / "unpacked" / MOD.name
+        if args.install
+        else MOD / "build"
+    )
     if build.exists():
         shutil.rmtree(build)
     build.mkdir(parents=True, exist_ok=True)
 
-    game = Path(args.game)
     nodes = load_nodes(game)
     locales = load_locales(game)
 
