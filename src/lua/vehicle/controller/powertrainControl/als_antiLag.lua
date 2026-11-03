@@ -17,6 +17,10 @@ local MIN_ENGINE_AV = 50              -- below this the engine is not running, s
 local POPCORN_COEF = 80
 local POPCORN_WINDOW = 4 -- seconds the sustained window is held open while coasting
 
+-- A limiter cut feeds the instant afterfire channel; the stock coefficients need
+-- several cuts to cross the 500000 audible threshold, this crosses it in one.
+local LIMITER_BANG_COEF = 8
+
 local base = nil
 local controlledEngine = nil
 local controlledTurbocharger = nil
@@ -31,7 +35,9 @@ local alsWasEnabled = false
 local rollingWasActive = false
 local launchWasActive = false
 local stockSustainedCoef = 0
+local stockInstantCoef = 0
 local crackling = false
+local banging = false
 
 local function updateGFX(dt)
     if not base then
@@ -78,11 +84,17 @@ local function updateGFX(dt)
 
     base.updateGFX(dt)
 
-    -- alsActive is the state machine saying it is actually holding the turbo, so a
-    -- fitted but unarmed part stays silent. How loud the pop is stays the decision
-    -- of the exhaust nodes, so a muffled system stays quiet.
+    -- The pipe plays whichever afterfire channel is the largest, so the crackle is
+    -- muted while a launch is held, otherwise it outweighs the limiter bang and the
+    -- pop becomes the multi sample. alsActive is the state machine saying the turbo
+    -- is actually held, so a fitted but unarmed part stays silent.
     if controlledEngine then
-        local crackle = enabled and electrics.values.alsActive
+        local bang = enabled and launchWasActive
+        if bang ~= banging then
+            banging = bang
+            controlledEngine.instantAfterFireCoef = bang and LIMITER_BANG_COEF or stockInstantCoef
+        end
+        local crackle = enabled and electrics.values.alsActive and not bang
         if crackle ~= crackling then
             crackling = crackle
             controlledEngine.sustainedAfterFireCoef = crackle and POPCORN_COEF or stockSustainedCoef
@@ -118,8 +130,10 @@ local function reset()
     end
     appliedOffset = 0
     crackling = false
+    banging = false
     if controlledEngine then
         controlledEngine.sustainedAfterFireCoef = stockSustainedCoef
+        controlledEngine.instantAfterFireCoef = stockInstantCoef
     end
     if controlledTurbocharger and controlledTurbocharger.isExisting then
         controlledTurbocharger.setWastegateOffset(0)
@@ -152,6 +166,7 @@ local function init(data)
 
     scrambleBoostPsi = tonumber(data.scrambleBoostPsi) or DEFAULT_SCRAMBLE_BOOST_PSI
     stockSustainedCoef = controlledEngine.sustainedAfterFireCoef or 0
+    stockInstantCoef = controlledEngine.instantAfterFireCoef or 0
     base.init(data)
     -- Anti-lag is on as soon as the part is installed, the hotkey turns it off.
     electrics.values.alsEnabled = 1
