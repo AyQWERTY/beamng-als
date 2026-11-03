@@ -231,12 +231,40 @@ def merge_after_turbo(engine, home, nodes):
     return False
 
 
-def engine_max_rpm(nodes, members):
-    """The engine's redline, used to scale the anti-lag arming thresholds.
+def part_redline(nodes, part):
+    """The RPM ceiling a part can reach, from the data the part carries itself.
 
-    The stock anti-lag controller never sets autoArmMinRPM in any jbeam, so it
-    keeps its 5000 RPM default and a 2200 RPM bus diesel can never arm - the hot
-    key would then do nothing.
+    The rev limiter is the ceiling the engine actually sees, so the lower of the
+    limiter and the redline wins: a part can be rated for 3200 RPM and still be
+    held at 2200 by its own limiter.
+    """
+    engine = nodes[part]["data"].get("mainEngine")
+    if not isinstance(engine, dict):
+        return None
+    ceiling = None
+    for key in ("revLimiterRPM", "maxRPM"):
+        raw = engine.get(key)
+        if isinstance(raw, str) and raw.startswith("$"):
+            raw = next(
+                (
+                    row[4]
+                    for row in variable_rows(nodes[part])
+                    if row[0] == raw
+                    and len(row) > 4
+                    and isinstance(row[4], (int, float))
+                ),
+                None,
+            )
+        if isinstance(raw, (int, float)) and (ceiling is None or raw < ceiling):
+            ceiling = raw
+    return ceiling
+
+
+def group_redline(nodes, members):
+    """The redline of the engine a part belongs to.
+
+    Vanilla anti-lag parts and plain ignition parts carry no mainEngine block at
+    all, so the only ceiling available for them is the one the engine declares.
     """
     for member in members:
         engine = nodes[member]["data"].get("mainEngine")
@@ -346,7 +374,7 @@ def als_variant(node, turbo, rpm, merge_after, stock_tunable, max_rpm):
     }
     if max_rpm:
         # The stock thresholds assume a car redline; a 2200 RPM bus diesel can never
-        # arm, so the hotkey would have no effect at all.
+        # reach them, so the hotkey would have no effect at all.
         config.setdefault("minActiveEngineRPM", round(max_rpm * MIN_ACTIVE_RATIO))
         config.setdefault("autoArmMinRPM", round(max_rpm * AUTO_ARM_RATIO))
         config.setdefault("autoDisarmMaxRPM", round(max_rpm * AUTO_DISARM_RATIO))
@@ -514,7 +542,7 @@ def main():
                 "rpm": target_rpm(turbo, nodes, members)
                 if turbo
                 else DEFAULT_TARGET_RPM,
-                "maxRpm": engine_max_rpm(nodes, members),
+                "maxRpm": group_redline(nodes, members),
             }
 
     generated = defaultdict(dict)
@@ -547,7 +575,7 @@ def main():
                     data["rpm"],
                     merge_after_turbo(data["engine"], home, nodes),
                     tunable(nodes, data["members"]),
-                    data["maxRpm"],
+                    part_redline(nodes, home) or data["maxRpm"],
                 )
                 parts += 1
             stats[1] += 1
