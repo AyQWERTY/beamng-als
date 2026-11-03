@@ -551,6 +551,7 @@ def main():
     generated = defaultdict(dict)
     used = set()
     no_turbo = set()
+    with_als = []
     totals = [0, 0, 0, 0]
     parts = 0
 
@@ -584,6 +585,8 @@ def main():
             stats[1] += 1
             stats[2] += int(tunable(nodes, data["members"]))
             stats[3] += int(peaked(turbo))
+        if stats[1]:
+            with_als.append(chassis_name)
         print(
             f"{chassis_name:<14} {stats[0]:>7} {stats[1]:>7} {stats[2]:>8} {stats[3]:>6}"
         )
@@ -603,7 +606,7 @@ def main():
     inputmap = json.loads(
         (SRC / "vehicles" / "_inputmap" / INPUTMAP).read_text(encoding="utf-8")
     )
-    for chassis_name in chassis_ready:
+    for chassis_name in with_als:
         out = build / "vehicles" / chassis_name / "inputmaps" / INPUTMAP
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(inputmap, indent=2) + "\n", encoding="utf-8")
