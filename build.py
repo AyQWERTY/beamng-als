@@ -81,7 +81,10 @@ def load_locales(game):
     for name in ("vehiclesGenerated.translation.json", "main.translation.json"):
         path = game / "locales" / "translations" / "en-US" / name
         if path.exists():
-            locales.update(decode(path.read_text(encoding="utf-8")))
+            document = decode(path.read_text(encoding="utf-8"))
+            if not isinstance(document, dict):
+                raise ValueError(f"{name} is not a translation object")
+            locales.update(document)
     return locales
 
 
