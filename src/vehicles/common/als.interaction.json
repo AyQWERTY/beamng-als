@@ -21,6 +21,13 @@
       "onUp": "electrics.values.alsRolling = 0",
       "title": "ALS: Rolling anti-lag",
       "desc": "Hold to keep anti-lag active while rolling"
+    },
+    "als_launch": {
+      "order": 23,
+      "onDown": "electrics.values.alsLaunch = 1",
+      "onUp": "electrics.values.alsLaunch = 0",
+      "title": "ALS: Rolling launch",
+      "desc": "Hold to pin the engine at the RPM it was at when the key was pressed, while anti-lag stays engaged"
     }
   }
 }

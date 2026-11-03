@@ -4,6 +4,7 @@
   "bindings": [
     { "control": "k", "action": "als_toggle" },
     { "control": "+", "action": "als_scramble" },
-    { "control": "u", "action": "als_rolling" }
+    { "control": "u", "action": "als_rolling" },
+    { "control": ";", "action": "als_launch" }
   ]
 }

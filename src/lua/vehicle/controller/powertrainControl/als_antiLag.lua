@@ -24,10 +24,12 @@ local controlledTurbocharger = nil
 local enabled = false
 local rolling = false
 local scrambling = false
+local launch = false
 local scrambleBoostPsi = DEFAULT_SCRAMBLE_BOOST_PSI
 local appliedOffset = 0
 local alsWasEnabled = false
 local rollingWasActive = false
+local launchWasActive = false
 local stockSustainedCoef = 0
 local crackling = false
 
@@ -39,6 +41,7 @@ local function updateGFX(dt)
     enabled = electrics.values.alsEnabled == 1
     rolling = electrics.values.alsRolling == 1
     scrambling = electrics.values.alsScramble == 1
+    launch = electrics.values.alsLaunch == 1
 
     -- The vanilla state machine is only entered on the edges of the hotkey
     -- state: forcing "idle" every frame would reset the arming timer and the
@@ -48,7 +51,8 @@ local function updateGFX(dt)
         base.setAntilagState(enabled and "idle" or "off")
     end
 
-    if enabled and rolling and controlledEngine and controlledEngine.outputAV1 >= MIN_ENGINE_AV then
+    local engineRunning = controlledEngine and controlledEngine.outputAV1 >= MIN_ENGINE_AV
+    if enabled and (rolling or launch) and engineRunning then
         if not rollingWasActive then
             rollingWasActive = true
             base.setAntilagState("manualOverride")
@@ -56,6 +60,20 @@ local function updateGFX(dt)
     elseif rollingWasActive then
         rollingWasActive = false
         base.setAntilagState(enabled and "idle" or "off")
+    end
+
+    -- A rolling launch pins the rev limit at the RPM the engine had when the key went
+    -- down, so the engine cannot run past it while the clutch is dropped. Only while a
+    -- gear is engaged: in neutral there is nothing to launch and the pin would just
+    -- strangle the engine.
+    if enabled and launch and engineRunning and (electrics.values.gearIndex or 0) >= 1 then
+        if not launchWasActive then
+            launchWasActive = true
+            controlledEngine:setTempRevLimiter(controlledEngine.outputAV1)
+        end
+    elseif launchWasActive then
+        launchWasActive = false
+        controlledEngine:resetTempRevLimiter()
     end
 
     base.updateGFX(dt)
@@ -89,7 +107,15 @@ local function reset()
     enabled = false
     rolling = false
     scrambling = false
+    launch = false
     alsWasEnabled = false
+    rollingWasActive = false
+    if launchWasActive then
+        launchWasActive = false
+        if controlledEngine then
+            controlledEngine:resetTempRevLimiter()
+        end
+    end
     appliedOffset = 0
     crackling = false
     if controlledEngine then
