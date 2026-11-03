@@ -75,6 +75,33 @@ def load_nodes(game):
     return nodes
 
 
+def load_locales(game):
+    """Flat key -> English text map for the names the vanilla parts use."""
+    locales = {}
+    for name in ("vehiclesGenerated.translation.json", "main.translation.json"):
+        path = game / "locales" / "translations" / "en-US" / name
+        if path.exists():
+            locales.update(decode(path.read_text(encoding="utf-8")))
+    return locales
+
+
+def display_name(name, locales):
+    """The text a part name renders as, for both plain names and localized ones."""
+    if isinstance(name, str):
+        return name.strip()
+    if not isinstance(name, dict) or not isinstance(name.get("txt"), str):
+        return ""
+    # A key that is not in the locale files is shown verbatim by the game, so
+    # the tail of it is the closest thing to the real name.
+    text = locales.get(name["txt"], name["txt"].rsplit(".", 1)[-1])
+    for key, value in (name.get("ctx") or {}).items():
+        if not isinstance(value, str):
+            continue
+        text = text.replace("{{" + key + " | translate}}", locales.get(value, value))
+        text = text.replace("{{" + key + "}}", locales.get(value, value))
+    return text.strip()
+
+
 def slot_types(node):
     """slotType of a part, always a list."""
     raw = node["data"].get("slotType")
@@ -322,7 +349,7 @@ def wastegate_override(section, turbo, merge_after, stock_tunable):
     return span if span > 0 else None
 
 
-def als_variant(node, turbo, rpm, merge_after, stock_tunable, max_rpm):
+def als_variant(node, turbo, rpm, merge_after, stock_tunable, max_rpm, locales):
     """A copy of a vanilla part that also carries the ALS controller."""
     part: dict = deepcopy(node["data"])
 
@@ -336,8 +363,11 @@ def als_variant(node, turbo, rpm, merge_after, stock_tunable, max_rpm):
             actions.append([action])
 
     info: dict = part.get("information") or {}
-    base = info.get("name")
-    if isinstance(base, str) and "lag" not in base.lower():
+    base = display_name(info.get("name"), locales)
+    # A localized name is a lookup key, so appending to it would point at a key
+    # the game has no translation for; the resolved English text is written as a
+    # plain string instead, which the game displays verbatim.
+    if base and "lag" not in base.lower():
         info["name"] = base + " + ALS"
     info["authors"] = AUTHORS
     part["information"] = info
@@ -468,7 +498,9 @@ def main():
         shutil.rmtree(build)
     build.mkdir(parents=True, exist_ok=True)
 
-    nodes = load_nodes(Path(args.game))
+    game = Path(args.game)
+    nodes = load_nodes(game)
+    locales = load_locales(game)
 
     chassis = [
         name
@@ -580,6 +612,7 @@ def main():
                     merge_after_turbo(data["engine"], home, nodes),
                     tunable(nodes, data["members"]),
                     part_redline(nodes, home) or data["maxRpm"],
+                    locales,
                 )
                 parts += 1
             stats[1] += 1
