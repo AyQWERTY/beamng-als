@@ -1,0 +1,36 @@
+{
+  "als_toggle": {
+    "cat": "vehicle_specific",
+    "ctx": "vlua",
+    "order": 20,
+    "title": "ALS: Toggle",
+    "desc": "Toggles the anti-lag system",
+    "onDown": "if not controller.getController(\"alsAntiLag\") then guihooks.message(\"This vehicle has no turbocharger, anti-lag is not available\", 4, \"ALS\") return end electrics.values.alsEnabled = 1 - (electrics.values.alsEnabled or 0) guihooks.message('ALS ' .. (electrics.values.alsEnabled == 1 and 'enabled' or 'disabled'), 4, 'ALS')"
+  },
+  "als_scramble": {
+    "cat": "vehicle_specific",
+    "ctx": "vlua",
+    "order": 21,
+    "title": "ALS: Scramble boost",
+    "desc": "Raises the boost limit for a temporary overboost",
+    "onDown": "if not controller.getController(\"alsAntiLag\") then return end electrics.values.alsScramble = 1 - (electrics.values.alsScramble or 0) guihooks.message('Scramble ' .. (electrics.values.alsScramble == 1 and 'enabled' or 'disabled'), 4, 'ALS')"
+  },
+  "als_rolling": {
+    "cat": "vehicle_specific",
+    "ctx": "vlua",
+    "order": 22,
+    "title": "ALS: Rolling anti-lag",
+    "desc": "Hold to keep anti-lag active while rolling",
+    "onDown": "electrics.values.alsRolling = 1",
+    "onUp": "electrics.values.alsRolling = 0"
+  },
+  "als_launch": {
+    "cat": "vehicle_specific",
+    "ctx": "vlua",
+    "order": 23,
+    "title": "ALS: Rolling launch",
+    "desc": "Hold to pin the engine at the RPM it was at when the key was pressed, while anti-lag stays engaged",
+    "onDown": "electrics.values.alsLaunch = 1",
+    "onUp": "electrics.values.alsLaunch = 0"
+  }
+}

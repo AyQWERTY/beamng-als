@@ -11,6 +11,12 @@ M.type = "auxiliary"
 
 local DEFAULT_SCRAMBLE_BOOST_PSI = 10 -- PSI added to the wastegate target while scrambling
 local MIN_ENGINE_AV = 50              -- below this the engine is not running, so ALS cannot hold
+local DEFAULT_TARGET_TURBO_RPM = 90000
+-- The stock anti-lag thresholds assume a car that can reach 5000 RPM; a 2000 RPM
+-- bus diesel never arms the system, so the thresholds follow the engine redline.
+local MIN_ACTIVE_RATIO = 0.35
+local AUTO_ARM_RATIO = 0.7
+local AUTO_DISARM_RATIO = 0.43
 
 -- The vanilla sustained afterfire burns 1000000 fuel per second, so the stock
 -- coefficients of 0.5-1.75 never build up enough for the pipe to pop.
@@ -87,7 +93,7 @@ local function updateGFX(dt)
     -- The pipe plays whichever afterfire channel is the largest, so the crackle is
     -- muted while a launch is held, otherwise it outweighs the limiter bang and the
     -- pop becomes the multi sample. alsActive is the state machine saying the turbo
-    -- is actually held, so a fitted but unarmed part stays silent.
+    -- is actually held, so a car that never armed the system stays silent.
     if controlledEngine then
         local bang = enabled and launchWasActive
         if bang ~= banging then
@@ -105,9 +111,9 @@ local function updateGFX(dt)
         end
     end
 
-    -- The wastegate slider moves the set point in the part data; scramble can
-    -- only add an offset on top of it, and that offset yields extra boost only
-    -- while the turbo still has headroom in its own pressure curve.
+    -- Scramble can only sit on top of the wastegate set point the turbo already has,
+    -- and it buys extra boost only while that turbo's own pressure curve still has
+    -- headroom above the set point.
     local offset = scrambling and scrambleBoostPsi or 0
     if offset ~= appliedOffset then
         appliedOffset = offset
@@ -140,6 +146,7 @@ local function reset()
     end
     if base then
         base.reset()
+        base.setAntilagState("off")
     end
 end
 
@@ -167,9 +174,26 @@ local function init(data)
     scrambleBoostPsi = tonumber(data.scrambleBoostPsi) or DEFAULT_SCRAMBLE_BOOST_PSI
     stockSustainedCoef = controlledEngine.sustainedAfterFireCoef or 0
     stockInstantCoef = controlledEngine.instantAfterFireCoef or 0
-    base.init(data)
-    -- Anti-lag is on as soon as the part is installed, the hotkey turns it off.
-    electrics.values.alsEnabled = 1
+
+    local redline = controlledEngine.maxRPM or 0
+    local config = {
+        -- The turbo publishes the speed its own wastegate aims for; the anti-lag
+        -- controller has to hold that same number or the PID fights the wastegate.
+        turboTargetRPM = controlledTurbocharger.antiLagTargetRPM or DEFAULT_TARGET_TURBO_RPM,
+        timeoutTime = 30,
+        timeoutResetTime = 2,
+    }
+    if redline > 0 then
+        config.minActiveEngineRPM = math.floor(redline * MIN_ACTIVE_RATIO + 0.5)
+        config.autoArmMinRPM = math.floor(redline * AUTO_ARM_RATIO + 0.5)
+        config.autoDisarmMaxRPM = math.floor(redline * AUTO_DISARM_RATIO + 0.5)
+    end
+    base.init(config)
+    -- The vanilla controller starts in "idle", which is already armed. With the
+    -- system off by default that would let anti-lag run before the key is ever
+    -- pressed, so the state is forced off here.
+    base.setAntilagState("off")
+    electrics.values.alsEnabled = 0
 end
 
 M.init = init

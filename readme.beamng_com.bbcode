@@ -1,0 +1,30 @@
+[B]ALS: Anti-Lag System[/B]
+Anti-lag on every turbocharged car in BeamNG.drive. [B]Yes, even the mod ones.[/B]
+
+Source: [URL='https://github.com/AyQWERTY/beamng-als']github.com/AyQWERTY/beamng-als[/URL]
+
+The mod adds one function: anti-lag. Everything else about the turbo stays as it was. Vanilla anti-lag parts have their power written into jbeam; here it is calculated from that turbo's own wastegate pressure and pressure curve, which lands on the same kind of numbers.
+
+[MEDIA=youtube]5gnrHvG4MQY[/MEDIA]
+The video shows an older version: the tuning sliders and the ALS part in the parts menu no longer exist. The keys and how anti-lag behaves are the same.
+
+[B]Controls[/B]
+[LIST]
+[*][B]K[/B] - Toggle ALS. Off when the vehicle spawns.
+[*][B]NumPad +[/B] - Scramble. Toggle: raises the boost set point for an overboost until pressed again.
+[*][B]U[/B] - Rolling anti-lag. Hold to keep anti-lag running while driving.
+[*][B];[/B] - Rolling launch. The rev cut jumps to the RPM the engine is at, and anti-lag is forced on.
+[/LIST]
+
+The four actions sit under [B]Vehicle Specific (installed parts)[/B] in Settings -> Controls, and each car can have its own binding.
+[ATTACH]1353422[/ATTACH]
+
+They also show up in the in-game bindings legend:
+[ATTACH]1350553[/ATTACH]
+
+[B]Caveats[/B]
+[LIST]
+[*]The mod ships its own copy of [FONT=Courier New]lua/vehicle/powertrain/turbocharger.lua[/FONT]. Only the anti-lag power estimate differs from the game's version, but the file replaces the game's one: a mod that also replaces it will win one way or the other, and a game update means the copy has to be re-checked.
+[*]Scramble is a fixed +10 psi offset. There are no tuning sliders.
+[*]Anti-lag needs a turbocharger. A naturally aspirated car keeps the keys, but they do nothing.
+[/LIST]
