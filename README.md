@@ -2,6 +2,8 @@
 
 Anti-lag you control from the keyboard, on every turbocharged car in BeamNG.drive.
 
+[![Subscribe on BeamNG](https://img.shields.io/badge/Subscribe_on_BeamNG.com-FF6600?style=for-the-badge)](https://www.beamng.com/resources/als-anti-lag-system.40159/)
+
 This is not gt02's [Anti-Lag System (Turbo)](https://www.beamng.com/resources/anti-lag-system-turbo.5791/) updated for a new game. It is a
 full rewrite, and the philosophy is different. gt02's mod gives the car a custom turbocharger and
 drives it from its own copy of the turbo code. This mod keeps the car's own turbo and adds the
