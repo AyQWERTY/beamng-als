@@ -158,6 +158,12 @@ def _array(text, i):
     return out, i + 1
 
 
+def first_value(text):
+    """The first value of a document, with anything after it ignored."""
+    text = text.lstrip("\ufeff")
+    return _value(text, _skip(text, 0))[0]
+
+
 def decode(text):
     """Read one jbeam/.pc document the way the engine would."""
     text = text.lstrip("\ufeff")

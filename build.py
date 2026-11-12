@@ -8,10 +8,12 @@ input actions, key bindings) live in src/ and are copied as they are.
 Usage:
     python build.py                 # build into build/
     python build.py --install       # build straight into the game's unpacked mods
+    python build.py --mods          # also cover the vehicles in the mod repo
     python build.py <game path>     # override the auto-detected game directory
 
 How it works:
-  1. index every node of every jbeam in content/vehicles/*.zip;
+  1. index every node of every jbeam in content/vehicles/*.zip, plus the mods in
+     the user's mod repo when --mods is given;
   2. find the chassis parts (slotType "main") and the engine groups they allow;
   3. in every engine group that has a turbocharger, take the part that owns the
      engine management (the vanilla anti-lag part if the chassis has one, else
@@ -29,7 +31,7 @@ from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
 
-from sjson import decode
+from sjson import SJSONError, decode, first_value
 
 MOD = Path(__file__).resolve().parent
 SRC = MOD / "src"
@@ -78,22 +80,56 @@ def find_game():
     return None
 
 
-def load_nodes(game):
-    """Every jbeam node in content/vehicles, keyed by part name."""
-    nodes = {}
-    archives = sorted((game / "content" / "vehicles").glob("*.zip"))
+def read_document(text):
+    """Parse a jbeam, tolerating the brace mistakes mod files ship with.
+
+    Mod authors sometimes leave out the outer object or close it one time too
+    many; the engine reads both, so a strict reader would lose those parts.
+    """
+    if text.lstrip("\ufeff \n\t,")[:1] == '"':
+        text = "{" + text + "}"
+    try:
+        return decode(text)
+    except SJSONError:
+        try:
+            return first_value(text)
+        except SJSONError:
+            return None
+
+
+def vehicle_key(path):
+    """The vehicle a jbeam belongs to: the folder under vehicles/."""
+    parts = path.split("/")
+    return parts[1] if parts[0] == "vehicles" and len(parts) > 2 else None
+
+
+def load_nodes(archives, mod_archives):
+    """Every jbeam node in the given archives, grouped by vehicle folder.
+
+    Returns the vehicles, the keys only the mods define and the keys a mod adds
+    parts to on top of the stock vehicle.
+    """
+    vehicles = defaultdict(dict)
+    mod_keys = set()
+    game_keys = set()
+    mods = set(mod_archives)
+    unreadable = 0
     for index, archive in enumerate(archives, 1):
         with zipfile.ZipFile(archive) as zf:
             entries = [entry for entry in zf.namelist() if entry.endswith(".jbeam")]
             for entry in entries:
-                document = decode(zf.read(entry).decode("utf-8", "replace"))
+                document = read_document(zf.read(entry).decode("utf-8", "replace"))
                 if not isinstance(document, dict):
+                    unreadable += 1
                     continue
+                key = vehicle_key(entry)
+                if key is None:
+                    continue
+                (mod_keys if archive in mods else game_keys).add(key)
                 for name, body in document.items():
-                    if isinstance(body, dict) and name not in nodes:
-                        nodes[name] = {
+                    if isinstance(body, dict) and name not in vehicles[key]:
+                        vehicles[key][name] = {
                             "path": entry,
-                            "archive": archive.stem,
                             "data": body,
                         }
         print(
@@ -102,7 +138,9 @@ def load_nodes(game):
             flush=True,
         )
     print(" " * 40, end="\r")
-    return nodes
+    if unreadable:
+        print(f"unreadable jbeam files: {unreadable}")
+    return vehicles, mod_keys - game_keys, mod_keys & game_keys
 
 
 def load_locales(game):
@@ -508,6 +546,99 @@ def als_variant(node, turbo, rpm, merge_after, stock_tunable, max_rpm, locales):
     return part
 
 
+def vehicle_parts(vehicles, key):
+    """The parts a vehicle can install: its own files plus the shared ones.
+
+    BeamNG keeps the engines several vehicles share in vehicles/common, and a
+    vehicle only reaches them through the slots its own parts declare, so the
+    shared parts are pulled in slot by slot until nothing new is left.
+    """
+    parts = dict(vehicles[key])
+    slots = set()
+    shared = vehicles.get("common", {})
+    while True:
+        for node in parts.values():
+            for slot, allowed, default in slot_rows(node):
+                slots.add(slot)
+                slots.update(allowed)
+                if default:
+                    slots.add(default)
+        fresh = [
+            name
+            for name, node in shared.items()
+            if name not in parts and any(slot in slots for slot in slot_types(node))
+        ]
+        if not fresh:
+            return parts
+        for name in fresh:
+            parts[name] = shared[name]
+
+
+def vehicle_variants(nodes, locales, generated, used):
+    """Generate the ALS variant of every engine group of one vehicle.
+
+    Returns (groups, groups with a turbo, tunable groups, peaked groups, parts
+    written, groups without a turbo).
+    """
+    by_slot = defaultdict(list)
+    for name, node in nodes.items():
+        for slot in slot_types(node):
+            by_slot[slot].append(name)
+
+    stats = [0, 0, 0, 0, 0]
+    no_turbo = 0
+    for name, node in nodes.items():
+        if "powertrain" not in node["data"]:
+            continue
+        if not any("ecu" in slot.lower() for slot, _, _ in slot_rows(node)):
+            continue
+        stats[0] += 1
+        members = [name]
+        for _, allowed, default in slot_rows(node):
+            members += [part for slot in allowed for part in by_slot.get(slot, [])]
+            if default in nodes:
+                members.append(default)
+        turbo = group_turbos(nodes, members)
+        if not turbo:
+            no_turbo += 1
+            continue
+        # The vanilla anti-lag slot hangs off the turbo part, so look for it in
+        # every part of the group before falling back to the ECU.
+        homes = [
+            part
+            for member in members
+            for slot, allowed, _ in slot_rows(nodes[member])
+            if "antilag" in slot.lower()
+            for allowed_slot in allowed
+            for part in by_slot.get(allowed_slot, [])
+        ] or [
+            part
+            for slot, allowed, _ in slot_rows(node)
+            if "ecu" in slot.lower()
+            for allowed_slot in allowed
+            for part in by_slot.get(allowed_slot, [])
+        ]
+        adjustable = tunable(nodes, members)
+        for home in dict.fromkeys(part for part in homes if part in nodes):
+            if home in used:
+                continue
+            used.add(home)
+            generated[nodes[home]["path"]][home + "_als"] = als_variant(
+                nodes[home],
+                turbo,
+                target_rpm(turbo, nodes, members),
+                merge_after_turbo(node, home, nodes),
+                adjustable,
+                part_redline(nodes, home) or group_redline(nodes, members),
+                locales,
+            )
+            stats[4] += 1
+        stats[1] += 1
+        stats[2] += int(adjustable)
+        stats[3] += int(peaked(turbo))
+    return stats, no_turbo
+
+
 def copy_tree(source, target):
     for path in source.rglob("*"):
         if path.is_file():
@@ -525,6 +656,11 @@ def main():
         "--install",
         action="store_true",
         help="write straight into the game's unpacked mods folder instead of build/",
+    )
+    parser.add_argument(
+        "--mods",
+        action="store_true",
+        help="also cover the vehicles in the installed mod repo",
     )
     args = parser.parse_args()
 
@@ -544,134 +680,50 @@ def main():
         shutil.rmtree(build)
     build.mkdir(parents=True, exist_ok=True)
 
-    nodes = load_nodes(game)
-    locales = load_locales(game)
-
-    chassis = [
-        name
-        for name, node in nodes.items()
-        if "main" in slot_types(node)
-        and node["path"] == f"vehicles/{node['archive']}/{node['archive']}.jbeam"
-    ]
-
-    # A chassis declares the slots its parts can fill inside its own files, an
-    # engine group is the part that fills one of those slots and owns the engine
-    # management sub-slots.
-    slots_of_chassis = defaultdict(set)
-    for name in chassis:
-        prefix = f"vehicles/{name}/"
-        for node in nodes.values():
-            if not node["path"].startswith(prefix):
-                continue
-            for slot, allowed, default in slot_rows(node):
-                slots_of_chassis[name].add(slot)
-                slots_of_chassis[name].update(allowed)
-                if default:
-                    slots_of_chassis[name].add(default)
-
-    by_slot = defaultdict(list)
-    for name, node in nodes.items():
-        for slot in slot_types(node):
-            by_slot[slot].append(name)
-
-    chassis_of_slot = defaultdict(list)
-    for name, slots in slots_of_chassis.items():
-        for slot in slots:
-            chassis_of_slot[slot].append(name)
-
-    engines = {}
-    for name, node in nodes.items():
-        if "powertrain" not in node["data"]:
-            continue
-        if not any("ecu" in slot.lower() for slot, _, _ in slot_rows(node)):
-            continue
-        members = [name]
-        for _, allowed, default in slot_rows(node):
-            members += [part for slot in allowed for part in by_slot.get(slot, [])]
-            if default in nodes:
-                members.append(default)
-        turbo = group_turbos(nodes, members)
-        # The vanilla anti-lag slot hangs off the turbo part, so look for it in
-        # every part of the group before falling back to the ECU.
-        homes = [
-            part
-            for member in members
-            for slot, allowed, _ in slot_rows(nodes[member])
-            if "antilag" in slot.lower()
-            for allowed_slot in allowed
-            for part in by_slot.get(allowed_slot, [])
-        ] or [
-            part
-            for slot, allowed, _ in slot_rows(node)
-            if "ecu" in slot.lower()
-            for allowed_slot in allowed
-            for part in by_slot.get(allowed_slot, [])
+    game_archives = sorted((game / "content" / "vehicles").glob("*.zip"))
+    mod_archives = []
+    if args.mods:
+        repo = user / "current" / "mods" / "repo"
+        mod_archives = [
+            archive
+            for archive in sorted(repo.glob("*.zip"))
+            if archive.stem != MOD.name
         ]
-        used_by = {
-            chassis_name
-            for slot in slot_types(node)
-            for chassis_name in chassis_of_slot.get(slot, [])
-        }
-        if used_by:
-            engines[name] = {
-                "chassis": used_by,
-                "members": members,
-                "turbo": turbo,
-                "engine": node,
-                "homes": list(dict.fromkeys(part for part in homes if part in nodes)),
-                "rpm": target_rpm(turbo, nodes, members)
-                if turbo
-                else DEFAULT_TARGET_RPM,
-                "maxRpm": group_redline(nodes, members),
-            }
+
+    vehicles, mod_keys, mixed_keys = load_nodes(
+        game_archives + mod_archives, mod_archives
+    )
+    locales = load_locales(game)
 
     generated = defaultdict(dict)
     used = set()
-    no_turbo = set()
     with_als = []
-    totals = [0, 0, 0, 0]
-    parts = 0
+    totals = [0, 0, 0, 0, 0]
+    without_turbo = 0
 
-    chassis_ready = sorted({c for group in engines.values() for c in group["chassis"]})
-    print(f"{'chassis':<14} {'engines':>7} {'turbos':>7} {'tunable':>8} {'peaked':>6}")
-    print("-" * 45)
-    for chassis_name in chassis_ready:
-        stats = [0, 0, 0, 0]
-        for group in sorted(
-            g for g in engines if chassis_name in engines[g]["chassis"]
-        ):
-            data = engines[group]
-            turbo = data["turbo"]
-            stats[0] += 1
-            if not turbo:
-                no_turbo.add(group)
-                continue
-            for home in data["homes"]:
-                if home in used:
-                    continue
-                used.add(home)
-                generated[nodes[home]["path"]][home + "_als"] = als_variant(
-                    nodes[home],
-                    turbo,
-                    data["rpm"],
-                    merge_after_turbo(data["engine"], home, nodes),
-                    tunable(nodes, data["members"]),
-                    part_redline(nodes, home) or data["maxRpm"],
-                    locales,
-                )
-                parts += 1
-            stats[1] += 1
-            stats[2] += int(tunable(nodes, data["members"]))
-            stats[3] += int(peaked(turbo))
+    print(f"{'vehicle':<21} {'engines':>7} {'turbos':>7} {'tunable':>8} {'peaked':>6}")
+    print("-" * 53)
+    for key, nodes in sorted(vehicles.items()):
+        if not any("main" in slot_types(node) for node in nodes.values()):
+            continue
+        stats, no_turbo = vehicle_variants(
+            vehicle_parts(vehicles, key), locales, generated, used
+        )
+        if not stats[0]:
+            continue
         if stats[1]:
-            with_als.append(chassis_name)
+            with_als.append(key)
+        marker = "[MOD]" if key in mod_keys else "[+mod]" if key in mixed_keys else ""
         print(
-            f"{chassis_name:<14} {stats[0]:>7} {stats[1]:>7} {stats[2]:>8} {stats[3]:>6}"
+            f"{marker:<6} {key:<14} {stats[0]:>7} {stats[1]:>7} {stats[2]:>8} {stats[3]:>6}"
         )
         totals = [a + b for a, b in zip(totals, stats)]
-    print("-" * 45)
-    print(f"{'total':<14} {totals[0]:>7} {totals[1]:>7} {totals[2]:>8} {totals[3]:>6}")
-    print(f"engine groups without a turbo: {len(no_turbo)}, parts generated: {parts}")
+        without_turbo += no_turbo
+    print("-" * 53)
+    print(f"{'total':<21} {totals[0]:>7} {totals[1]:>7} {totals[2]:>8} {totals[3]:>6}")
+    print(
+        f"engine groups without a turbo: {without_turbo}, parts generated: {totals[4]}"
+    )
 
     for path, variants in sorted(generated.items()):
         out = build / path.replace(".jbeam", "_als.jbeam")
